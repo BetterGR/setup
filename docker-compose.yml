@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  web-app:
+    build: ../services/web-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_GATEWAY_URL=${NEXT_PUBLIC_API_GATEWAY_URL}
+      - NEXT_PUBLIC_KEYCLOAK_URL=${NEXT_PUBLIC_KEYCLOAK_URL}
+      - NEXT_PUBLIC_REDIRECT_URI=${NEXT_PUBLIC_REDIRECT_URI}
+    depends_on:
+      - api-gateway
+
+  api-gateway:
+    build: ../services/api-gateway
+    ports:
+      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+    environment:
+      - API_GATEWAY_PORT=${API_GATEWAY_PORT}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - KEYCLOAK_URL=${AUTH_ISSUER}
+      - GRADES_ADDRESS=localhost:${GRADES_PORT}
+      - STUDENTS_ADDRESS=localhost:${STUDENTS_PORT}
+      - HOMEWORK_ADDRESS=localhost:${HOMEWORK_PORT}
+      - COURSES_ADDRESS=localhost:${COURSES_PORT}
+      - STAFF_ADDRESS=localhost:${STAFF_PORT}
+    depends_on:
+      - keycloak
+      - grades
+      - students
+      - homework
+      - courses
+      - staff
+
+  keycloak:
+    build: ../services/keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+
+  homework:
+    build: ../services/homework
+    ports:
+      - "${HOMEWORK_PORT}:${HOMEWORK_PORT}"
+    environment:
+      - AUTH_ISSUER=${AUTH_ISSUER}  
+      - GRPC_PORT=${HOMEWORK_PORT}
+
+  students:
+    build: ../services/students
+    ports:
+      - "${STUDENTS_PORT}:${STUDENTS_PORT}"
+    environment:
+      - AUTH_ISSUER=${AUTH_ISSUER}  
+      - GRPC_PORT=${STUDENTS_PORT}
+
+  courses:
+    build: ../services/courses
+    ports:
+      - "${COURSES_PORT}:${COURSES_PORT}"
+    environment:
+      - AUTH_ISSUER=${AUTH_ISSUER}  
+      - GRPC_PORT=${COURSES_PORT}
+
+  staff:
+    build: ../services/staff
+    ports:
+      - "${STAFF_PORT}:${STAFF_PORT}"
+    environment:
+      - AUTH_ISSUER=${AUTH_ISSUER}  
+      - GRPC_PORT=${STAFF_PORT}
+
+  grades:
+    build: ../services/grades
+    ports:
+      - "${GRADES_PORT}:${GRADES_PORT}"
+    environment:
+      - AUTH_ISSUER=${AUTH_ISSUER}  
+      - GRPC_PORT=${GRADES_PORT}
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - keycloak
+
+volumes:
+  keycloak_data:
