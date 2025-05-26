@@ -1,0 +1,3 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE USER keycloak WITH PASSWORD 'keycloak';
+CREATE DATABASE keycloak OWNER keycloak;
