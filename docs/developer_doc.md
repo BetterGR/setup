@@ -14,6 +14,7 @@ BetterGR is a scalable and modular application built using microservice architec
 The project integrates third-party tools like Keycloak for authentication and gRPC for inter-service communication.
 
 Key technologies used:
+
 - **Go**: Backend microservices and API Gateway.
 - **Nuxt with Vue**: Frontend development.
 - **GraphQL**: API design for flexible data querying.
@@ -80,53 +81,28 @@ BetterGR uses environment variables to configure the application. These variable
 - **API Gateway settings**: For routing and GraphQL configuration.
 
 ### Environment Variables:
-Environment variables are used to manage sensitive information and application settings. Examples include:
-API_GATEWAY_PORT: Port for the API Gateway configuration.
-CLIENT_SECRET: Secret key used for authentication purposes.
-KEYCLOAK_URL: URL for the Keycloak authentication server.
-REDIRECT_URI: URI for handling authentication callbacks.
-GRADES_PORT, STUDENTS_PORT, HOMEWORK_PORT, COURSES_PORT, STAFF_PORT: Ports for microservice communication.
+Environment variables are used to manage sensitive information and application settings. 
+Examples include:
+- API_GATEWAY_PORT: Port for the API Gateway configuration.
+- CLIENT_SECRET: Secret key used for authentication purposes.
+- KEYCLOAK_URL: URL for the Keycloak authentication server.
+- REDIRECT_URI: URI for handling authentication callbacks.
+- GRADES_PORT, STUDENTS_PORT, HOMEWORK_PORT, COURSES_PORT, STAFF_PORT: Ports for microservice communication.
 
 ## Database Setup
 Each microservice in BetterGR uses a dedicated PostgreSQL database to ensure data isolation and scalability. 
 
 The setup process includes:
 
-**1.** **Database Initialization**:
+### **Database Initialization**:
    - Use the provided SQL scripts to create the necessary tables and schemas for each microservice.
    - Example command to execute a script:
      ```bash
      psql -U <username> -d <database_name> -f <script_name>.sql
      ```
-**2.** **Database Connection Configuration**:
-    
+     
+For further information on setting the database, go to [Database Readme](dbDesign.md).
 
-- Configure the connection details in the `.env` file for each microservice. Example environment variables:
-
-       ```
-        # API Gateway Configuration
-        API_GATEWAY_PORT=1234
-        
-        # Authentication Settings
-        CLIENT_SECRET=**********
-        KEYCLOAK_URL=http://auth.betterGR.org
-        REDIRECT_URI=http://localhost:3000/callback
-        
-        # Microservice Addresses
-        GRADES_PORT=localhost:50051
-        STUDENTS_PORT=localhost:50052
-        HOMEWORK_PORT=localhost:50053
-        COURSES_PORT=localhost:50054
-        STAFF_PORT=localhost:50055
-       ```
-
-
-**3.** **Indexing and Optimization**:
-  - Ensure proper indexing for frequently queried columns to improve performance.
-  - Example SQL for creating an index:
-    ```sql
-    CREATE INDEX idx_course_name ON courses(name);
-    ```
 
 
 ## Third-Party Integrations
@@ -138,7 +114,7 @@ BetterGR integrates with several third-party tools to enhance functionality:
 
 ## API Documentation
 
-For detailed API documentation, including endpoints, request/response formats and authentication mechanisms, go to [API Gateway Documentation](will be added soon - link to api_docs.md).
+For detailed API documentation, including endpoints, request/response formats and authentication mechanisms, go to [API Gateway Documentation](api_docs.md).
 
 
 ## Microservices
@@ -250,7 +226,7 @@ Contributors should update the issue with progress, discussions, and any relevan
     
         Example `Dockerfile` for a microservice:
        ```dockerfile
-       FROM golang:1.20-alpine
+       FROM golang:1.24-alpine
        WORKDIR /app
        COPY . .
        RUN go build -o main .
